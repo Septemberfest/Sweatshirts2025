@@ -168,7 +168,7 @@
 
       <form id="orderForm" class="grid" action="https://formspree.io/f/manbkoak" method="POST">
         <!-- compact order summary included with every submission -->
-        <input name="items_csv" id="items_csv">
+        <input type="hidden" name="items_csv" id="items_csv">
         <input type="hidden" name="order_total" id="order_total">
 
         <input type="hidden" name="_subject" value="Septemberfest Sweatshirt Order">
@@ -440,59 +440,75 @@ document.addEventListener('DOMContentLoaded', function () {
   }, true); // capture=true so we run before any other submit handlers
 });
 </script>
-
-   <script>
-// Build CSV of items + total before submit (runs before other handlers)
+<script>
+/* Fill items_csv (single line) + order_total BEFORE any other submit handler */
 (function(){
   function text(el){ return (el && el.textContent || '').trim(); }
   function num(s){ var v = String(s||'').replace(/[^0-9.]/g,''); return v?parseFloat(v):0; }
 
-  function buildSummary(){
-    var rowsEl = document.querySelector('#rows');
-    var trs = rowsEl ? Array.from(rowsEl.querySelectorAll('tr'))
-                     : Array.from(document.querySelectorAll('table tbody tr'));
+  function fillSummary() {
+    var form = document.getElementById('orderForm') || document.querySelector('form');
+    if (!form) return;
 
-    var lines = ['Style,Size,Color,Qty,Price,Grey,Beige'];
+    // Collect rows from your items table(s)
+    var tbodys = [];
+    var t1 = document.querySelector('#rows'); if (t1) tbodys.push(t1);
+    tbodys = tbodys.concat(Array.from(document.querySelectorAll('table tbody')));
+
+    var items = [];
     var grand = 0;
 
-    trs.forEach(function(tr){
-      var tds = tr.querySelectorAll('td');
-      if (!tds.length) return;
+    tbodys.forEach(function(tb){
+      Array.from(tb.querySelectorAll('tr')).forEach(function(tr){
+        var tds = tr.querySelectorAll('td'); if (!tds.length) return;
 
-      var style = text(tds[0]);
-      var size  = text(tds[1]);
-      var price = num(text(tds[2]));
-      var qtyEl = tds[3] ? tds[3].querySelector('input') : null;
-      var qty   = qtyEl ? parseInt(qtyEl.value || '0', 10) || 0 : 0;
-      var greyC = tds[4] ? tds[4].querySelector('input[type="checkbox"]') : null;
-      var beigeC= tds[5] ? tds[5].querySelector('input[type="checkbox"]') : null;
-      var grey  = greyC && greyC.checked ? 'Y' : '';
-      var beige = beigeC && beigeC.checked ? 'Y' : '';
-      var color = grey ? 'Grey' : (beige ? 'Beige' : '');
+        var style = text(tds[0]);
+        var size  = text(tds[1]);
+        var price = num(text(tds[2]));
 
-      if (qty > 0) {
-        lines.push([style, size, color, qty, price, grey, beige].join(','));
-        grand += qty * price;
-      }
+        var qtyEl = tds[3] ? tds[3].querySelector('input') : null;
+        var qty   = qtyEl ? parseInt(qtyEl.value || '0', 10) || 0 : 0;
+
+        var greyC  = tds[4] && tds[4].querySelector('input[type="checkbox"]');
+        var beigeC = tds[5] && tds[5].querySelector('input[type="checkbox"]');
+        var color  = (greyC && greyC.checked) ? 'Grey' : ((beigeC && beigeC.checked) ? 'Beige' : '');
+
+        if (qty > 0) {
+          items.push({style, size, color, qty, price});
+          grand += qty * price;
+        }
+      });
     });
 
-    var csv = document.getElementById('items_csv');
-    var tot = document.getElementById('order_total');
-    if (csv) csv.value = lines.join('\n');
-    if (tot) tot.value = grand.toFixed(2);
+    // Single-line, email-friendly summary
+    var summary = items.map(function(i){
+      var colorTag = i.color ? '-' + i.color : '';
+      return i.style + '-' + i.size + colorTag + ' x' + i.qty + ' @ ' + i.price;
+    }).join(' | ');
+
+    var itemsCsv   = document.getElementById('items_csv');
+    var orderTotal = document.getElementById('order_total');
+    if (itemsCsv)   itemsCsv.value   = summary;
+    if (orderTotal) orderTotal.value = grand.toFixed(2);
   }
 
-  document.addEventListener('DOMContentLoaded', function(){
-    var form = document.getElementById('orderForm') || document.querySelector('form');
-    if (!form || form.dataset.itemsCsvHook === '1') return;
-    form.dataset.itemsCsvHook = '1';
+  // ❶ Run BEFORE other handlers by listening on document in CAPTURE phase
+  document.addEventListener('submit', function(e){
+    var form = e.target;
+    if (!form || !form.matches('#orderForm')) return;
+    fillSummary();
+  }, true); // capture = true
 
-    // Capture-phase: runs before any existing submit logic (so values are set)
-    form.addEventListener('submit', function(){ try { buildSummary(); } catch(_){} }, true);
+  // ❷ Keep it updated as people change qty/checkboxes
+  document.addEventListener('input', function(e){
+    if (!e.target.closest('#orderForm')) return;
+    if (e.target.matches('input[type="number"], input[type="checkbox"]')) {
+      fillSummary();
+    }
   });
 })();
 </script>
-    
+      
 </body>
 </html>
 
