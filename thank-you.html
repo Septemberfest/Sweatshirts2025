@@ -2,38 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Thank You — Septemberfest Order</title>
+  <title>Thank you — Septemberfest</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    :root {
-      --brand: #0d3b66;
-      --border: #d9dee5;
-      --muted: #666;
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#475569; --border:#e2e8f0;
+      --btn:#0ea5e9; --btnText:#fff;
     }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background: #f7f9fc; color: #102a43; }
-    .wrap { max-width: 800px; margin: 60px auto; padding: 0 16px; }
-    .card { background: #fff; border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 6px 18px rgba(16,42,67,.06); padding: 28px; }
-    h1 { margin: 0 0 10px; font-size: 28px; color: var(--brand); text-align: center; }
-    p  { line-height: 1.55; font-size: 16px; }
-    .muted { color: var(--muted); }
-    .actions { display: flex; justify-content: center; gap: 12px; margin-top: 22px; }
-    .btn { padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--brand); text-decoration: none; }
-    .btn.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
-    .btn:hover { filter: brightness(0.98); }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    .wrap{max-width:780px;margin:48px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+    h1{margin:0 0 8px 0;font-size:28px}
+    p{margin:8px 0}
+    .muted{color:var(--muted)}
+    .actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--border);text-decoration:none}
+    .btn.primary{background:var(--btn);color:var(--btnText);border-color:transparent}
+    .qr{display:flex;flex-direction:column;align-items:center;gap:8px;margin:12px 0 0}
+    .qr img{max-width:180px;height:auto;border-radius:8px}
+    .qr .cap{font-size:0.9rem;color:var(--muted)}
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <main class="wrap">
     <div class="card">
-      <h1>Thank you for submitting your order!</h1>
-      <p>Once your PayPal payment is confirmed, we'll email you to let you know your sweatshirt order is complete.</p>
-      <p>We look forward to seeing you at <strong>Septemberfest on 9/6</strong>.</p>
-      <p class="muted">Questions? Email us at <a href="mailto:pennsvilleseptemberfest@gmail.com">pennsvilleseptemberfest@gmail.com</a>.</p>
+      <h1>Thank you! 🎉</h1>
+      <p>We received your order.</p>
+
+      <p><strong>Next step — Pay to Confirm:</strong> Please complete payment via <strong>PayPal</strong>. Once we verify your payment, we’ll email you to confirm your sweatshirt order is complete.</p>
+
+      <!-- PayPal QR -->
+      <div class="qr">
+        <!-- If your filename differs, change paypal-qr.png accordingly -->
+        <img src="paypal-qr.png" alt="PayPal QR code">
+        <div class="cap">Scan to pay with PayPal</div>
+      </div>
+
+      <p><strong>Pickup:</strong> Saturday, September 6 · Septemberfest 50/50 Booth.</p>
+      <p class="muted">Questions? <a href="mailto:pennsvilleseptemberfest@gmail.com">pennsvilleseptemberfest@gmail.com</a></p>
+
       <div class="actions">
-        <a class="btn" href="./">Back to form</a>
-        <a class="btn primary" href="https://account.venmo.com/pay?recipients=PVSeptemberfestCommittee" target="_blank" rel="noopener">Open PayPal</a>
+        <a class="btn" href="index.html">Return to Order Form</a>
       </div>
     </div>
-  </div>
+  </main>
 </body>
 </html>
